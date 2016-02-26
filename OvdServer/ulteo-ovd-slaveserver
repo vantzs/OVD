@@ -1,0 +1,174 @@
+#! /usr/bin/python
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2008-2010 Ulteo SAS
+# http://www.ulteo.com
+# Author Laurent CLOUET <laurent@ulteo.com> 2010
+# Author Julien LANGLOIS <julien@ulteo.com> 2008-2010
+# Author Samuel BOVEE <samuel@ulteo.com> 2010
+#
+# This program is free software; you can redistribute it and/or 
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+import getopt
+import os
+import signal
+import sys
+import threading
+import time
+
+from ovd.Communication.HttpServer import HttpServer as Communication
+from ovd.Config import Config
+from ovd.Logger import Logger
+from ovd.Platform import Platform
+from ovd.SlaveServer import SlaveServer
+
+
+def usage():
+	print "Usage: %s [-c|--config-file= filename] [-d|--daemonize] [-h|--help] [-p|--pid-file= filename]"%(sys.argv[0])
+	print "\t-c|--config-file filename: load filename as configuration file instead default one"
+	print "\t-d|--daemonize: start in background"
+	print "\t-h|--help: print this help"
+	print "\t-p|--pid-file filename: write process id in specified file"
+	print
+
+
+def writePidFile(filename):
+	try:
+		f = file(filename, "w")
+	except:
+		return False
+	
+	f.write(str(os.getpid()))
+	f.close()
+	return True
+
+
+def main():
+	config_file = os.path.join(Platform.System.get_default_config_dir(), "slaveserver.conf")
+	daemonize = False
+	pidFile = None
+
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], 'c:dhp:', ['config-file=', 'daemonize', 'help', 'pid-file='])
+	
+	except getopt.GetoptError, err:
+		print >> sys.stderr, str(err)
+		usage()
+		sys.exit(2)
+	
+	for o, a in opts:
+		if o in ("-c", "--config-file"):
+			config_file = a
+		elif o in ("-d", "--daemonize"):
+			daemonize = True
+		elif o in ("-h", "--help"):
+			usage()
+			sys.exit()
+		elif o in ("-p", "--pid-file"):
+			pidFile = a
+	
+	if len(args) > 0:
+		print >> sys.stderr, "Invalid argument '%s'"%(args[0])
+		usage()
+		sys.exit(2)
+	
+	if not Config.read(config_file):
+		print >> sys.stderr, "invalid configuration file '%s'"%(config_file)
+		sys.exit(1)
+	
+	if not Config.is_valid():
+		print >> sys.stderr, "invalid config"
+		sys.exit(1)
+	
+	if daemonize:
+		pid = os.fork()
+		if pid < 0:
+			print >> sys.stderr, "Error when fork"
+			sys.exit(1)
+		if pid > 0:
+			sys.exit(0)
+		
+		pid = os.fork()
+		if pid < 0:
+			print >> sys.stderr, "Error when fork"
+			sys.exit(1)
+		if pid > 0:
+			sys.exit(0)
+	
+	
+	if pidFile is not None:
+		if not writePidFile(pidFile):
+			print >> sys.stderr, "Unable to write pid-file '%s'"%(pidFile)
+			sys.exit(1)
+	
+	Logger.initialize("OVD", Config.log_level, Config.log_file, (not daemonize), Config.log_threaded)
+	
+	server = SlaveServer(Communication)
+	signal.signal(signal.SIGINT, stop)
+	signal.signal(signal.SIGTERM, stop)
+	try:
+		ret = server.init()
+		if not ret:
+			print >> sys.stderr, "Server initialization failed"
+			server.stop()
+			if pidFile is not None and os.path.exists(pidFile):
+				os.remove(pidFile)
+			sys.exit(3)
+		
+		ret = server.push_production()
+		while ret is False:
+			Logger.warn("Session Manager not connected. Sleeping for a while ...")
+			time.sleep(60)
+			ret = server.push_production()
+		
+		Logger.info("SlaveServer started")
+		while not server.stopped:
+			server.loop_procedure()
+			time.sleep(30)
+
+	except (InterruptException, KeyboardInterrupt):
+		Logger.info("SlaveServer interruption")
+	
+	if not server.stopped:
+		t = threading.Thread(target=server.stop)
+		t.start()
+		t.join()
+	
+	if Config.log_threaded:
+		Logger.initialize("OVD", Config.log_level, Config.log_file, (not daemonize), False)
+	
+	Logger.info("SlaveServer stopped")
+	if pidFile is not None and os.path.exists(pidFile):
+		os.remove(pidFile)
+
+
+def stop(Signum, Frame):
+	signal.signal(signal.SIGINT, signal.SIG_IGN)
+	signal.signal(signal.SIGTERM, signal.SIG_IGN)
+	Logger.info("Signal receive")
+	raise InterruptException()
+
+
+class InterruptException(Exception):
+	pass
+
+
+if __name__ == "__main__":
+	# freeze_support must be the first line
+	import multiprocessing
+	multiprocessing.freeze_support()
+	
+	main()
+

@@ -1,0 +1,194 @@
+# Copyright (C) 2008-2010 Ulteo SAS
+# http://www.ulteo.com
+# Author Gauvain POCENTEK <gauvain@linutop.com> 2008-2009
+# Author Jeremy DESVAGES <jeremy@ulteo.com> 2009-2010
+# Author Samuel BOVEE <samuel@ulteo.com> 2010
+# Author Laurent CLOUET <laurent@ulteo.com> 2010
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+AC_INIT([@MODULE@], [@VERSION@], [http://bugs.ulteo.com])
+
+# Init automake
+AM_INIT_AUTOMAKE([1.9 tar-pax])
+AC_PROG_INSTALL
+
+# Intl (borrowed from intltool.m4)
+AC_PATH_PROG(INTLTOOL_UPDATE, [intltool-update])
+AC_PATH_PROG(INTLTOOL_MERGE, [intltool-merge])
+AC_PATH_PROG(INTLTOOL_EXTRACT, [intltool-extract])
+if test -z "$INTLTOOL_UPDATE" -o -z "$INTLTOOL_MERGE" -o -z "$INTLTOOL_EXTRACT"; then
+    AC_MSG_ERROR([The intltool scripts were not found. Please install intltool.])
+fi
+
+# Check the gettext tools to make sure they are GNU
+AC_PATH_PROG(XGETTEXT, xgettext)
+AC_PATH_PROG(MSGMERGE, msgmerge)
+AC_PATH_PROG(MSGFMT, msgfmt)
+if test -z "$XGETTEXT" -o -z "$MSGMERGE" -o -z "$MSGFMT"; then
+    AC_MSG_ERROR([GNU gettext tools not found; required for intltool])
+fi
+xgversion="`$XGETTEXT --version|grep '(GNU ' 2> /dev/null`"
+mmversion="`$MSGMERGE --version|grep '(GNU ' 2> /dev/null`"
+mfversion="`$MSGFMT --version|grep '(GNU ' 2> /dev/null`"
+if test -z "$xgversion" -o -z "$mmversion" -o -z "$mfversion"; then
+    AC_MSG_ERROR([GNU gettext tools not found; required for intltool])
+fi
+GETTEXT_PACKAGE=uovdsm
+AC_SUBST(GETTEXT_PACKAGE)
+AC_SUBST(ALL_LINGUAS)
+
+# change libdir for HA OCF resource
+libdir='${prefix}/lib'
+
+#################################################
+###             INTLTOOL_PERL                 ###
+AC_PATH_PROG(INTLTOOL_PERL, [perl])
+if test -z "$INTLTOOL_PERL"; then
+   AC_MSG_ERROR([perl not found; required for intltool])
+fi
+if test -z "`$INTLTOOL_PERL -v | fgrep '5.' 2> /dev/null`"; then
+   AC_MSG_ERROR([perl 5.x required for intltool])
+fi
+if test "x$2" != "xno-xml"; then
+   AC_MSG_CHECKING([for XML::Parser])
+   if `$INTLTOOL_PERL -e "require XML::Parser" 2>/dev/null`; then
+       AC_MSG_RESULT([ok])
+   else
+       AC_MSG_ERROR([XML::Parser perl module is required for intltool])
+   fi
+fi
+
+#################################################
+###                  prototype                ###
+# Allow use of already installed javascript libraries
+AC_ARG_WITH([prototypedir],
+    [AC_HELP_STRING([--with-prototypedir],
+        [use a local installation of the Prototype javascript library])], ,
+    [with_prototypedir=no])
+if test x"$with_prototypedir" != xno; then
+    if test -f "$with_prototypedir/prototype.js"; then
+        PROTOTYPEDIR="$with_prototypedir"
+        AC_SUBST(PROTOTYPEDIR)
+        echo "Using $PROTOTYPEDIR for Prototype library."
+    else
+        AC_MSG_WARN([$with_prototypedir/prototype.js doesn't exist; using builtin Prototype library.])
+        PROTOTYPEDIR=
+    fi
+fi
+AM_CONDITIONAL(PROTOTYPE, [test -n "$PROTOTYPEDIR"])
+
+#################################################
+###              scriptaculous                ###
+AC_ARG_WITH([scriptaculousdir],
+    [AC_HELP_STRING([--with-scriptaculousdir],
+        [use a local installation of the Scriptaculous javascript library])], ,
+    [with_scriptaculousdir=no])
+if test x"$with_scriptaculousdir" != xno; then
+    if test -f "$with_scriptaculousdir/scriptaculous.js"; then
+        SCRIPTACULOUSDIR="$with_scriptaculousdir"
+        AC_SUBST(SCRIPTACULOUSDIR)
+        echo "Using $SCRIPTACULOUSDIR for Scriptaculous library."
+    else
+        AC_MSG_WARN([$with_scriptaculousdir/scriptaculous.js doesn't exist; using builtin Prototype library.])
+        SCRIPTACULOUSDIR=
+    fi
+fi
+AM_CONDITIONAL(SCRIPTACULOUS, [test -n "$SCRIPTACULOUSDIR"])
+
+#################################################
+###                 libchart                  ###
+AC_ARG_WITH([libchart],
+    [AC_HELP_STRING([--without-libchart],
+        [use a local installation of the libchart PHP library])],
+    [libchart=no],
+    [libchart=yes])
+if test "$libchart" = "yes"; then
+    LIBCHARTDIR=/usr/share/php/libchart/classes/libchart.php
+    test -e $LIBCHARDIR && AC_MSG_ERROR([$LIBCHARTDIR not found ; deploy PHP libchart library.])
+else
+    DISTCHECK_CONFIGURE_FLAGS+=" --without-libchart"
+    AC_SUBST(DISTCHECK_CONFIGURE_FLAGS)
+fi
+
+AC_ARG_WITH([ha], [AC_HELP_STRING([--with-ha], [add the module HA to the SM])],
+            [ha=yes], )
+AM_CONDITIONAL(HA, [test -n "$ha"])
+if test -n "$ha"; then
+    AC_CONFIG_FILES([ha/Makefile web/admin/ha/Makefile])
+    DISTCHECK_CONFIGURE_FLAGS+=" --with-ha"
+fi
+
+AC_CONFIG_FILES([
+Makefile
+config/Makefile
+scripts/Makefile
+web/Makefile
+web/client/Makefile
+web/crons/Makefile
+web/webservices/Makefile
+web/modules/Makefile
+web/modules/SessionManagement/Makefile
+web/modules/AuthMethod/Makefile
+web/modules/UserGroupDB/Makefile
+web/modules/UserGroupDBDynamic/Makefile
+web/modules/UserGroupDBDynamicCached/Makefile
+web/modules/UserDB/Makefile
+web/modules/ApplicationDB/Makefile
+web/modules/ApplicationsGroupDB/Makefile
+web/modules/ProfileDB/Makefile
+web/modules/SharedFolderDB/Makefile
+web/admin/Makefile
+web/admin/ajax/Makefile
+web/admin/classes/Makefile
+web/admin/includes/Makefile
+web/admin/init/Makefile
+web/admin/media/script/Makefile
+web/admin/media/script/ajax/Makefile
+web/admin/media/script/lib/calendarpopup/Makefile
+web/admin/media/script/lib/nifty/Makefile
+web/admin/media/script/lib/prototype/Makefile
+web/admin/media/script/lib/scriptaculous/Makefile
+web/admin/media/script/lib/Makefile
+web/admin/media/style/Makefile
+web/admin/media/image/loadbalancing/Makefile
+web/admin/media/image/menu/Makefile
+web/admin/media/image/Makefile
+web/admin/media/Makefile
+web/includes/Makefile
+web/includes/functions.inc.d/Makefile
+web/classes/Makefile
+web/classes/abstract/Makefile
+web/classes/abstract/liaison/Makefile
+web/classes/configelements/Makefile
+web/classes/events/Makefile
+web/classes/tasks/Makefile
+web/PEAR/Makefile
+web/PEAR/Auth/Makefile
+web/PEAR/Auth/SASL/Makefile
+web/PEAR/CAS/Makefile
+web/PEAR/CAS/PGTStorage/Makefile
+web/PEAR/CAS/languages/Makefile
+web/PEAR/Mail/Makefile
+web/PEAR/Net/Makefile
+web/events/Makefile
+web/events/callbacks/Makefile
+web/events/callbacks/SessionStart/Makefile
+web/events/callbacks/SessionStatusChanged/Makefile
+web/events/callbacks/ServerStatusChanged/Makefile
+web/events/callbacks/SqlFailure/Makefile
+examples/Makefile
+])
+AC_OUTPUT

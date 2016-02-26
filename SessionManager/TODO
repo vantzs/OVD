@@ -1,0 +1,2 @@
+* monitoring:
+  - use the data field for servers_history to store downtimes

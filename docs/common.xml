@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<article xmlns:xi="http://www.w3.org/2001/XInclude">
+  <important id="gold">
+    <para>
+      The Ulteo OVD @gold_product_name@ is a <emphasis
+      role="strong">GOLD module</emphasis>. GOLD modules are
+      commercial Open-Source modules that are not available in the
+      free download section. To access executable GOLD modules, you
+      need a dedicated login and password.
+    </para>
+    <para>
+      In order to get access to GOLD modules, contact us at <ulink
+      url="http://www.ulteo.com/home/contact-us" />.
+    </para>
+  </important>
+
+    <simplesect id="system_requirements_client">
+      <title>System requirements</title>
+      <itemizedlist>
+        <listitem><para>
+          Evaluations/POCs: Minimum prerequisites are 1 CPU core and 512MB RAM
+        </para></listitem>
+        <listitem><para>
+          Production envrionments: Ulteo recommends 1GB RAM whenever possible or more
+        </para></listitem>
+      </itemizedlist>
+    </simplesect>
+
+    <simplesect id="system_requirements_server_linux_all">
+      <title>System requirements</title>
+      <itemizedlist id="system_requirements_server_linux_all_content">
+        <listitem><para>
+          Evaluations/POCs: Minimum prerequisites are 1 CPU core and 1GB RAM
+        </para></listitem>
+        <listitem><para>
+            Production environments: Ulteo does not recommends to use
+            this installation method for production environments
+          </para></listitem>
+      </itemizedlist>
+    </simplesect>
+</article>

@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+	  "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"
+	  [<!ENTITY parent "Support_Debian_Squeeze.xml">]>
+<article xmlns:xi="http://www.w3.org/2001/XInclude">
+  <transform_var name="distrib_pretty_name" value="SUSE Linux Enterprise Server (SLES) 11 SP1"/>
+  <transform_var name="distrib_name" value="sles" />
+  <transform_var name="distrib_version" value="11_sp1"/>
+  <transform_var name="distrib_dvd_url" value="http://www.novell.com//products/server/"/>
+  <transform_var name="rpm_install_cmd" value="zypper"/>
+  <transform_var name="rpm_mysql_packages" value="mysql"/>
+  <transform_var name="mysql_service" value="mysql"/>
+  <transform_var name="apache_service" value="apache2"/>
+
+  <xi:include href="&parent;" xpointer="header" />
+  <xi:include href="&parent;" xpointer="first_para" />
+
+  <section id="prerequisites">
+    <xi:include href="&parent;" xpointer="prerequisites_title" />
+
+    <xi:include href="&parent;" xpointer="prerequisites_root" />
+    <xi:include href="&parent;" xpointer="system_requirements" />
+
+    <xi:include href="&parent;" xpointer="warning_name_examples" />
+
+    <simplesect id="seLinux">
+      <title id="seLinux_title">SELinux</title>
+      <para id="seLinux_para1">
+        Ulteo OVD is not compatible with SELinux yet. So, if you have
+        SELinux installed and enabled on your system, you have to
+        disable it.
+      </para>
+      <para id="seLinux_para2">
+        To disable SELinux:
+
+        <itemizedlist>
+          <listitem>
+            <para>
+              Edit the <emphasis>/etc/selinux/config</emphasis> file
+              and set the <emphasis>SELINUX</emphasis> variable to <emphasis>disabled</emphasis>.
+            </para>
+            <screen>
+<![CDATA[SELINUX=disabled]]>
+            </screen>
+          </listitem>
+
+          <listitem>
+            <para>
+              Reboot your system
+            </para>
+            <screen>
+<![CDATA[# reboot]]>
+            </screen>
+          </listitem>
+
+          <listitem>
+            <para>
+              Check SELinux is now disabled
+            </para>
+            <screen>
+<![CDATA[# sestatus
+SELinux status:              disabled]]>
+            </screen>
+          </listitem>
+        </itemizedlist>
+      </para>
+    </simplesect>
+  </section>
+
+  <section id="repository">
+    <xi:include href="&parent;" xpointer="repository_title" />
+
+    <para id="repository_para">
+      @distrib_pretty_name@ use the RPM packaging system. So you need
+      to have an internet connexion on your @distrib_pretty_name@
+      system and add an Ulteo RPM repository into your system.
+    </para>
+
+    <section id="repository_online">
+      <xi:include href="&parent;" xpointer="repository_online_title" />
+      <xi:include href="&parent;" xpointer="repository_online_para" />
+
+      <itemizedlist>
+        <listitem id="repository_online_step1">
+          <para id="repository_online_step1_para">
+            Add the ovd repository:
+          </para>
+          <screen>
+<![CDATA[# zypper ar http://archive.ulteo.com/ovd/3.0/@distrib_name@/@distrib_version@ ovd]]>
+          </screen>
+        </listitem>
+
+        <listitem id="repository_online_step2">
+          <para>
+            Install the keyring package to validate the repository
+            using gpg:
+          </para>
+          <screen>
+<![CDATA[# rpm --import http://archive.ulteo.com/ovd/keyring]]>
+          </screen>
+        </listitem>
+      </itemizedlist>
+    </section>
+
+    <section id="repository_offline">
+      <xi:include href="&parent;" xpointer="repository_offline_title" />
+      <xi:include href="&parent;" xpointer="repository_offline_warning" />
+
+      <itemizedlist>
+        <xi:include href="&parent;" xpointer="repository_offline_step1" />
+        <xi:include href="&parent;" xpointer="repository_offline_step2" />
+
+        <listitem id="repository_offline_step3">
+          <para id="repository_offline_step3_para">
+            Add the ovd repository:
+          </para>
+          <screen>
+<![CDATA[# zypper ar file:///root/ovd-3.0-@distrib_name@-@distrib_version@ ovd-offline]]>
+          </screen>
+        </listitem>
+
+        <listitem id="repository_offline_step4">
+          <para id="repository_offline_step4_para">
+            Install the keyring package to validate the repository using gpg:
+          </para>
+          <screen>
+<![CDATA[# rpm --import ovd-3.0-@distrib_name@-@distrib_version@/keyring]]>
+          </screen>
+        </listitem>
+
+     </itemizedlist>
+    </section>
+
+    <simplesect id="repository_common">
+      <xi:include href="&parent;" xpointer="repository_common_title" />
+
+      <itemizedlist>
+        <listitem>
+          <xi:include href="&parent;" xpointer="repository_common_step1_para" />
+          <screen>
+<![CDATA[# zypper refresh]]>
+          </screen>
+        </listitem>
+      </itemizedlist>
+    </simplesect>
+  </section>
+
+
+  <section id="sm">
+    <xi:include href="&parent;" xpointer="sm_title" />
+    <xi:include href="&parent;" xpointer="sm_first_para" />
+
+    <section id="sql">
+      <xi:include href="&parent;" xpointer="sql_title" />
+      <xi:include href="&parent;" xpointer="sql_para" />
+
+      <itemizedlist>
+	<listitem>
+	  <para>
+	    Install the <emphasis>mysql</emphasis> package:
+	  </para>
+          <screen>
+<![CDATA[# @rpm_install_cmd@ install @rpm_mysql_packages@]]>
+          </screen>
+        </listitem>
+
+	<listitem>
+	  <para>
+	    To start automatically MySQL when the system boots up
+	  </para>
+	  <screen>
+<![CDATA[# chkconfig @mysql_service@ on]]>
+	  </screen>
+	</listitem>
+
+	<listitem>
+	  <para>
+	    Start the service
+	  </para>
+	  <screen>
+<![CDATA[# service @mysql_service@ start]]>
+	  </screen>
+	</listitem>
+
+	<listitem>
+	  <para>
+	    Define the root mysql password
+	  </para>
+	  <screen>
+<![CDATA[# mysqladmin -u root password 'mysql_root_password']]>
+	  </screen>
+	</listitem>
+
+        <xi:include href="&parent;" xpointer="mysql_createdb" />
+      </itemizedlist>
+   </section>
+   
+   <section id="sm_install">
+     <xi:include href="&parent;" xpointer="sm_install_title" />
+
+     <itemizedlist>
+       <listitem>
+         <xi:include href="&parent;" xpointer="sm_install_package" />
+	 <screen>
+<![CDATA[# @rpm_install_cmd@ install ulteo-ovd-session-manager]]>
+         </screen>
+       </listitem>
+
+       <listitem>
+         <para>Launch the configuration tool</para>
+         <screen>
+<![CDATA[# sm-config
+Admin login: admin
+Password: 
+Retype password: 
+Chroot download url [http://www.ulteo.com/main/downloads/ulteo-ovd.php?suite=3.0]: 
+Chroot destination [/var/cache/ulteo/sessionmanager/base.tar.gz]: 
+
+Options:
+* chroot download:  yes
+* chroot URI:       http://www.ulteo.com/main/downloads/ulteo-ovd.php?suite=3.0
+* chroot directory: /var/cache/ulteo/sessionmanager/base.tar.gz
+
+Is this correct? [Y/n]]]>
+         </screen>
+	 <note>
+	   <para>
+	     If you don't have access to Internet, please use the
+	     following command instead of the previous one:
+	     <screen><![CDATA[ # sm-config --no-download]]></screen>
+	     Then, please read <link linkend="sm_chroot">this</link>
+	     to manually get the subsystem archive.
+	   </para>
+	 </note>
+       </listitem>
+
+       <listitem id="sm_configure_apache_service">
+         <para>Configure and start apache service</para>
+         <screen>
+<![CDATA[# chkconfig @apache_service@ on
+# service @apache_service@ restart]]>
+         </screen>
+       </listitem>
+     </itemizedlist>
+     
+     <xi:include href="&parent;" xpointer="sm-config" />
+     <xi:include href="&parent;" xpointer="sm_chroot" />
+   </section>
+  </section>
+
+  <section id="subsystem">
+    <xi:include href="&parent;" xpointer="subsystem_title" />
+
+    <itemizedlist>
+      <listitem>
+        <xi:include href="&parent;" xpointer="subsystem_package" />
+        <screen>
+<![CDATA[# @rpm_install_cmd@ install ulteo-ovd-subsystem]]>
+        </screen>
+      </listitem>
+
+      <listitem>
+        <para>Launch the configuration tool</para>
+        <screen>
+<![CDATA[# ovd-subsystem-config 
+Session Manager address : sm.ulteo.com
+Chroot destination [/opt/ulteo]:]]>
+        </screen>
+        <xi:include href="&parent;" xpointer="subsystem-sm-warning" />
+      </listitem>
+
+       <listitem>
+         <para>Configure and start the Ulteo service</para>
+         <screen>
+<![CDATA[# chkconfig ulteo-ovd-subsystem on
+# service ulteo-ovd-subsystem restart]]>
+         </screen>
+       </listitem>
+    </itemizedlist>
+
+    <xi:include href="&parent;" xpointer="subsystem_last_para" />
+    <xi:include href="&parent;" xpointer="subsystem_last_screenshot" />
+    <xi:include href="&parent;" xpointer="aps_redirection_name" />
+  </section>
+
+  <section id="wc">
+    <xi:include href="&parent;" xpointer="wc_title" />
+    <xi:include href="&parent;" xpointer="wc_para_1" />
+    <xi:include href="&parent;" xpointer="wc_para_2" />
+
+    <itemizedlist>
+      <listitem>
+        <xi:include href="Support_Ubuntu_Hardy.xml" xpointer="wc_package" />
+        <screen>
+<![CDATA[# @rpm_install_cmd@ install ulteo-ovd-web-client ulteo-ovd-web-client-ajaxplorer]]>
+        </screen>
+      </listitem>
+
+      <listitem>
+        <para>Launch the configuration tool</para>
+        <screen>
+<![CDATA[# ovd-webclient-config
+Do you want to link the web client to a specific Session Manager ? ([yes]/no): 
+Session Manager address [127.0.0.1]: sm.ulteo.com]]>
+        </screen>
+       </listitem>
+
+      <listitem>
+        <xi:include xpointer="xpointer(//*[@id='sm_configure_apache_service']/node())" /> 
+      </listitem>
+    </itemizedlist>
+
+    <xi:include href="&parent;" xpointer="wc_last_1" />
+    <xi:include href="&parent;" xpointer="wc_last_2" />
+  </section>
+  <xi:include href="colophon.xml" />
+</article>

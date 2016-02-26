@@ -1,0 +1,101 @@
+Source: xrdp
+Section: x11
+Priority: extra
+Maintainer: Samuel Bovée <samuel@ulteo.com>
+Build-Depends: debhelper (>= 6), cdbs, quilt,
+ python (>= 2.6), python-central, python-svn,
+ libxml2-dev, libx11-dev, libxfixes-dev, libssl-dev, libpam0g-dev,
+ libpulse-dev, libcups2-dev, libltdl-dev, libfuse-dev, libjpeg62-dev,
+ libmagickwand-dev
+Standards-Version: 3.8.3
+XS-Python-Version: >= 2.5
+
+Package: xrdp
+Architecture: any
+Depends: ${shlibs:Depends}, ${python:Depends}, tightvncserver
+Recommends: xfonts-base, xfonts-encodings
+Description: RDP server for Linux
+ Xrdp is a RDP server for Linux. It provides remote display of a desktop and
+ many other features such as:
+  * seamless display
+  * printer and local device mapping
+
+Package: xrdp-seamrdp
+Architecture: any
+Depends: ${shlibs:Depends}, xrdp
+Description: Seamless XRDP Shell
+ Seamlessrdpshell is a rdp addon offering the possibility to have an
+ application without a desktop.
+
+Package: xrdp-rdpdr
+Architecture: any
+Depends: ${shlibs:Depends}, xrdp, fuse-utils
+Description: XRDP disks redirection
+ XRDP channel that handle disks redirection.
+
+Package: xrdp-clipboard
+Architecture: any
+Depends: ${shlibs:Depends}, xrdp
+Description: XRDP clipboard
+ XRDP channel providing copy/past text functionnality.
+
+Package: xrdp-sound
+Architecture: any
+Depends: ${shlibs:Depends}, xrdp, pulseaudio,
+ alsa-base, alsa-utils, libasound2-plugins
+Description: XRDP plugin for PulseAudio
+ This package contains the XRDP plugin for PulseAudio, a sound server for POSIX
+ and WIN32 systems.
+
+Package: xrdp-printer
+Architecture: all
+Depends: ${python:Depends}, xrdp-rdpdr, ghostscript, cups
+Description: cups file converter to ps format
+ XRDP Printer converts a ps file from cups in ps
+
+Package: xrdp-python
+Section: python
+Architecture: all
+Depends: ${python:Depends}, xrdp
+XB-Python-Version: ${python:Versions}
+Description: Python API for XRDP
+ XRDP-Python is a Python wrapper for XRDP
+
+################
+# DEBUG packages
+
+Package: xrdp-dbg
+Section: debug
+Architecture: any
+Depends: xrdp (= ${binary:Version})
+Description: XRDP (debug symbols)
+
+Package: xrdp-seamrdp-dbg
+Section: debug
+Architecture: any
+Depends: xrdp-seamrdp (= ${binary:Version})
+Description: XRDP seamless (debug symbols)
+
+Package: xrdp-rdpdr-dbg
+Section: debug
+Architecture: any
+Depends: xrdp-rdpdr (= ${binary:Version})
+Description: XRDP disk redirection (debug symbols)
+
+Package: xrdp-clipboard-dbg
+Section: debug
+Architecture: any
+Depends: xrdp-clipboard (= ${binary:Version})
+Description: XRDP clipboard (debug symbols)
+
+Package: xrdp-printer-dbg
+Section: debug
+Architecture: any
+Depends: xrdp-printer (= ${binary:Version})
+Description: XRDP printer (debug symbols)
+
+Package: xrdp-sound-dbg
+Section: debug
+Architecture: any
+Depends: xrdp-sound (= ${binary:Version})
+Description: XRDP sound (debug symbols)

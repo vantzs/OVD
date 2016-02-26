@@ -1,0 +1,116 @@
+html {
+	background-color: #fff;
+	color: #585858;
+
+	font-family: "Lucida Grande", Verdana, Lucida, Helvetica, Arial, sans-serif;
+
+	font-size: 1em;
+}
+
+a {
+	font-weight: bold;
+	font-size: 0.9em;
+	color: #36c;
+	text-decoration: none;
+}
+a:hover {
+	color: #f60;
+}
+
+h1, h2, h3, h4, h5 {
+	font-weight: normal;
+	border-bottom: 1px solid #8cacbb;
+}
+
+h1 {
+	border: none;
+	font-size: 1.6em;
+	font-weight: bold;
+}
+
+h2 {
+	font-size: 1.8em;
+	/*margin-left: 1em;*/
+	margin-top: 1.5em;
+	text-align: center;
+	border-bottom: none;
+}
+
+.section h2 {
+	font-size: 1.5em;
+	text-align: left;
+	border-bottom: 1px solid #8cacbb;
+}
+
+h3 {
+	font-size: 1.6em;
+	/*margin-left: 2em;*/
+	margin-top: 1em;
+	text-align: center;
+	border-bottom: none;
+}
+
+.section h3 {
+	font-size: 1.3em;
+	text-align: left;
+	border-bottom: 1px solid #8cacbb;
+}
+
+h4 {
+	font-size: 1.1em;
+	/*margin-left: 2em;*/
+	margin-top: 1em;
+}
+
+li p {
+	margin: .25em 0;
+}
+
+a, img {
+	border: 0;
+}
+
+img {
+    margin-bottom: 20px;
+}
+
+pre {
+	background: #eee;
+	border: 1px solid #8cacbb;
+
+	font-family: courier, monospace;
+
+	padding: 0.5em;
+
+	white-space: pre;
+}
+
+.toc {
+	background: #eee;
+	border: 1px solid #8cacbb;
+
+	padding: 0.5em;
+}
+
+.section .section {
+	padding-left: 3%;
+}
+.section .simplesect {
+	padding-left: 3%;
+}
+
+hr {
+	border: 1px solid #8cacbb;
+}
+
+div.important { 
+	background:  #ffdcaf;
+	border : 1px dashed #C52;
+	margin: 10px;
+	padding: 10px;
+}
+
+div.note { 
+	background: #e4e9f5;
+	border : 1px dashed #a9b8da;
+}

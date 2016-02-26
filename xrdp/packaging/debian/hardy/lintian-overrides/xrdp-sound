@@ -1,0 +1,2 @@
+xrdp-sound: debian-changelog-file-is-a-symlink
+xrdp-sound: unusual-interpreter ./etc/xrdp/rdpsnd.pa #!/usr/bin/pulseaudio

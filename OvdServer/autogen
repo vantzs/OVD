@@ -1,0 +1,80 @@
+#! /usr/bin/python
+# -*- coding: UTF-8 -*-
+
+# Copyright (C) 2010-2011 Ulteo SAS
+# http://www.ulteo.com
+# Author Julien LANGLOIS <julien@ulteo.com> 2010, 2011
+# Author Samuel BOVEE <samuel@ulteo.com> 2010
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; version 2
+# of the License
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+import os, sys, pysvn
+import time
+
+path = os.path.dirname( os.path.realpath( __file__ ) )
+name = "ovd-slaveserver"
+extra_modules = ""
+
+# Detect the version
+if os.environ.has_key("OVD_VERSION"):
+	version = os.environ["OVD_VERSION"]
+else:
+	c = pysvn.Client()
+	revision = c.info(path)["revision"].number
+	if sys.platform == "win32":
+		version = "99.99.0.%05d"%(revision)
+	else:
+		version = "99.99+svn%05d"%(revision)
+
+
+# OS detection
+if sys.platform == "linux2":
+	platform_dir = "Linux"
+elif sys.platform == "win32":
+	platform_dir = "Windows"
+else:
+	raise Exception("No supported platform")
+
+
+# generate setup.py
+f = file(os.path.join(path, "setup.py.in"), "r")
+content = f.read()
+f.close()
+
+if "--gateway" in sys.argv:
+	name = "ovd-slaveserver-gateway"
+	extra_modules = "	setup_args['packages'] += ['ovd.Role.Gateway']"
+
+content = content.replace("@NAME@", name)
+content = content.replace("@VERSION@", str(version))
+content = content.replace("@EXTRA_MODULES@", extra_modules)
+content = content.replace("@YEAR@", time.strftime("%Y"))
+
+f = file(os.path.join(path, "setup.py"), "w")
+f.write(content)
+f.close()
+
+
+# generate Manifest.in
+f = file(os.path.join(path, "MANIFEST.in.in"), "r")
+content = f.read()
+f.close()
+
+if not "--gateway" in sys.argv:
+	content += "purge ovd.Role.Gateway"
+
+f = file(os.path.join(path, "MANIFEST.in"), "w")
+f.write(content)
+f.close()

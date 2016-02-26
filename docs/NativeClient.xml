@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<article xmlns:xi="http://www.w3.org/2001/XInclude">
+  <transform_var name="gold_product_name" value="Native Client"/>
+
+  <articleinfo>
+    <title>Ulteo Open Virtual Desktop v@VERSION@</title>
+    <subtitle>Native Client</subtitle>
+    <graphic fileref="img/ovd.png" align="center"/>
+
+    <copyright>
+      <year>@YEAR@</year>
+      <holder>Ulteo SAS - <ulink url="http://www.ulteo.com" /></holder>
+    </copyright>
+  </articleinfo>
+  
+  <xi:include href="common.xml" xpointer="gold" />
+  
+  <section id="intro">
+    <title id="intro_title">Introduction</title>
+
+    <para>
+      This documentation aims to describe the usage of Ulteo Open Virtual Desktop "Native Client" in its capabilities and how to launch Ulteo OVD sessions with it.
+    </para>
+  </section>
+
+  <section>
+    <title>Prerequisites</title>
+
+    <para>
+      The OVD Native client can be installed on <trademark class="registered">Microsoft</trademark> <trademark>Windows</trademark> XP or newer.
+    </para>
+    <para>
+      It can also be installed on Ubuntu 10.04 (Lucid Lynx)
+    </para>
+
+    <xi:include href="common.xml" xpointer="system_requirements_client" />
+  </section>
+  
+  <section id="installation_windows">
+    <title id="installation_windows_title">Installation on <trademark class="registered">Microsoft</trademark> <trademark>Windows</trademark></title>
+    
+    <para>
+      Download and execute the Ulteo OVD Native Client installer, <ulink url="http://www.ulteo.com/main/downloads/ulteo-ovd-nc.php?suite=3.0">from this place</ulink>
+    </para>
+
+    <para>
+      <screenshot>
+        <screeninfo>Native Client - Installation step 01</screeninfo>
+        <graphic fileref="img/native/install01.png"></graphic>
+      </screenshot>
+    </para>
+
+    <para>
+      Select where you want to copy the client files
+    </para>
+
+    <para>
+      <screenshot>
+        <screeninfo>Native Client - Installation step 03</screeninfo>
+        <graphic fileref="img/native/install03.png"></graphic>
+      </screenshot>
+    </para>
+
+    <para>
+      The client installation is finished. You can now launch a session.
+    </para>
+
+    <para>
+      <screenshot>
+        <screeninfo>Native Client - Installation step 04</screeninfo>
+        <graphic fileref="img/native/install04.png"></graphic>
+      </screenshot>
+    </para>
+  </section>
+  
+  <section id="installation_linux">
+    <title id="installation_linux_title">Installation on Ubuntu 10.04</title>
+
+    <xi:include href="Installation_Gateway_Lucid.xml" xpointer="repository_online" />
+    <xi:include href="Installation_Gateway_Lucid.xml" xpointer="repository_offline" />
+    <xi:include href="Installation_Gateway_Lucid.xml" xpointer="repository_common" />
+
+    <section id="package_install">
+      <title>Package installation</title>
+      <itemizedlist>
+	<listitem>
+          <para>
+            Install the
+            package <emphasis>ulteo-ovd-native-client</emphasis>:
+          </para>
+          <screen>
+<![CDATA[# apt-get install ulteo-ovd-native-client]]>
+          </screen>
+	</listitem>
+      </itemizedlist>
+    </section>
+  </section>
+  
+  <section id="userinterface">
+    <title id="userinterface_title">User interface</title>
+
+    <para>
+      When you start the Native Client, you have access to the login window that you will use to launch your session.
+    </para>
+
+    <para>
+      <screenshot>
+        <screeninfo>Native Client - Login window</screeninfo>
+        <graphic fileref="img/native/authentication.png"></graphic>
+      </screenshot>
+    </para>
+
+    <para>
+      You just have to type your login and password, click the "Start!" button and voilà!
+    </para>
+
+    <para>
+      <screenshot>
+        <screeninfo>Native Client - User session</screeninfo>
+        <graphic fileref="img/native/started.png"></graphic>
+      </screenshot>
+    </para>
+  </section>
+
+  <section>
+    <title>Advanced settings</title>
+
+    <para>
+      At the login window, you can set advanced parameters by clicking the "More options ..." button.
+    </para>
+
+    <para>
+      <screenshot>
+        <screeninfo>Native Client - Advanced login window</screeninfo>
+        <graphic fileref="img/native/more_options_auto.png"></graphic>
+      </screenshot>
+    </para>
+
+    <para>
+      As you can see, you now have more available options, each one is described below.
+    </para>
+
+    <simplesect id="advanced_settings">
+      <title>Advanced settings description</title>
+
+      <itemizedlist>
+        <listitem>
+          <para>
+            <emphasis>Use local credentials:</emphasis> When enabled, the Web Client will request the Session Manager with your current machine's credentials, using for example Kerberos or NTLM. When disabled, the Web Client will request the Session Manager with the login and password entered in the login window.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <emphasis>Mode:</emphasis> This option allows you to pick which session mode you want to use.
+            <itemizedlist>
+              <listitem>
+                <para>
+                  <emphasis>Auto:</emphasis> It is the Session Manager who will choose between a desktop session or an Application session.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <emphasis>Application:</emphasis> Launch a window with a list of application available. Applications are launched seamlessly.
+                </para>
+              </listitem>
+              <listitem>
+                <para>
+                  <emphasis>Desktop:</emphasis> Launch a full desktop with applications integrated inside it.
+                </para>
+              </listitem>
+            </itemizedlist>
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <emphasis>Resolution:</emphasis> Choose which resolution will be used, it applies only on desktop sessions.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <emphasis>Auto-publish shorcuts:</emphasis> Choose if you want to have shorcuts on your actual desktop at the session start, it applies only on application sessions.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <emphasis>Language:</emphasis> This option allows you to pick which language your OVD session will use.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            <emphasis>Keyboard layout:</emphasis> This option allows you to select which keyboard layout your local keyboard is using.
+          </para>
+        </listitem>
+      </itemizedlist>
+    </simplesect>
+  </section>
+
+  <section>
+    <title>Start a session</title>
+
+    <para>
+      When you start a session, a loading splash appears.
+    </para>
+
+    <para>
+      <screenshot>
+        <screeninfo>Native Client - Session loading</screeninfo>
+        <graphic fileref="img/native/loading.png"></graphic>
+      </screenshot>
+    </para>
+
+    <para>
+      Below you will find screenshots for both Desktop and Application mode.
+    </para>
+
+    <simplesect>
+      <title>Desktop session</title>
+
+      <para>
+        When the session is ready, your Desktop is available and you can launch applications, explore your files...
+      </para>
+
+      <para>
+        <screenshot>
+          <screeninfo>Native Client - Desktop session</screeninfo>
+          <graphic fileref="img/native/desktop.png"></graphic>
+        </screenshot>
+      </para>
+    </simplesect>
+
+    <simplesect>
+      <title>Application session</title>
+
+      <para>
+        When the session is ready, your Application session is available and you can launch applications seamlessly.
+      </para>
+
+      <para>
+        <screenshot>
+          <screeninfo>Native Client - Application session</screeninfo>
+          <graphic fileref="img/native/started.png"></graphic>
+        </screenshot>
+      </para>
+      
+      <para>
+        You can launch applications by clicking on the arrow button. You can also choose to integrate the applications shorcuts to your desktop by clicking on <emphasis>Display icons</emphasis>.
+      </para>
+    </simplesect>
+  </section>
+
+  <section id="advanced_options">
+    <title id="advanced_options_title">Advanced features</title>
+
+    <section id="config-file">
+      <title>Default configuration</title>
+
+      <para>
+        When enable the <emphasis>Remember me</emphasis> checkbox, the
+        current configuration is saved in a configuration file. This
+        file is named <emphasis>default.conf</emphasis> and uses the INI
+        syntax.
+      </para>
+      <para>
+        The directory used to store the configuration file depends on the system:
+        <itemizedlist>
+          <listitem>
+            <para>On <trademark class="registered">Microsoft Windows</trademark> systems, it's <emphasis>Application Data\ulteo\ovd\client</emphasis></para>
+          </listitem>
+          <listitem>
+            <para>On Linux systems, it's <emphasis>~/.ulteo/ovd/client</emphasis></para>
+          </listitem>
+        </itemizedlist>
+      </para>
+
+      <para>
+        Here is the recognized INI tree:
+        <itemizedlist>
+          <listitem>
+            <para>Section <emphasis role="strong">server</emphasis></para>
+            <itemizedlist>
+              <listitem>
+                <para><emphasis role="strong">host</emphasis>, the server to connect to</para>
+              </listitem>
+              <listitem>
+                <para><emphasis role="strong">port</emphasis>, the port to use if not default (443)</para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+
+          <listitem>
+            <para>Section <emphasis role="strong">user</emphasis></para>
+            <itemizedlist>
+              <listitem>
+                <para><emphasis role="strong">login</emphasis>, the login you want to use</para>
+              </listitem>
+              <listitem>
+                <para>
+                  <emphasis role="strong">use-local-credentials</emphasis>, Can be
+                  <emphasis>true</emphasis> or
+                  <emphasis>false</emphasis> (default).
+                </para>
+                <para>
+                  When this option is used, the <emphasis>login</emphasis>
+                  attribute is useless.
+                </para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+
+          <listitem>
+            <para>Section <emphasis role="strong">session</emphasis></para>
+            <itemizedlist>
+              <listitem>
+                <para><emphasis role="strong">language</emphasis>, using the IETF lang code</para>
+              </listitem>
+
+              <listitem>
+                <para><emphasis role="strong">keymap</emphasis>, using the IETF lang code</para>
+              </listitem>
+
+              <listitem>
+                <para>
+                  <emphasis role="strong">mode</emphasis>, the session mode,
+                  can be <emphasis>applications</emphasis>,
+                  <emphasis>auto</emphasis> or <emphasis>desktop</emphasis>
+                </para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+          
+          <listitem>
+            <para>Section <emphasis role="strong">publication</emphasis></para>
+            <itemizedlist>
+              <listitem>
+                <para>
+                  <emphasis role="strong">auto-publish</emphasis>, for
+                  applications mode only, add the application shortcuts on
+                  the Desktop and perform file associations. Can be
+                  <emphasis>true</emphasis> (default) or
+                  <emphasis>false</emphasis>.
+                </para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+
+          <listitem>
+            <para>Section <emphasis role="strong">screen</emphasis></para>
+            <itemizedlist>
+              <listitem>
+                <para>
+                  <emphasis role="strong">size</emphasis>, for desktop mode
+                  only. Can be <emphasis>800x600</emphasis>,
+                  <emphasis>1024x768</emphasis> (default),
+                  <emphasis>1280x678</emphasis>,
+                  <emphasis>maximized</emphasis> or
+                  <emphasis>fullscreen</emphasis>
+                </para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+
+         <listitem>
+            <para>Section <emphasis role="strong">gui</emphasis></para>
+            <itemizedlist>
+              <listitem>
+                <para>
+                  <emphasis role="strong">locked-gui</emphasis>,
+                  minimal interface with only login and password
+                  fields
+                </para>
+              </listitem>
+            </itemizedlist>
+          </listitem>
+        </itemizedlist>
+      </para>
+
+      <simplesect>
+        <title><trademark class="registered">Microsoft Windows</trademark> registry</title>
+        
+        <para>
+          On <trademark class="registered">Microsoft Windows</trademark>
+          systems, it's also possible to read the default configuration
+          from the registry by use the option <emphasis>--reg</emphasis>
+        </para>
+
+        <para>
+          The Native Client read the HKEY_LOCAL_MACHINE first and then,
+          the HKEY_CURRENT_USER tree. The readed path is
+          <emphasis>Software\Ulteo\OVD\NativeClient</emphasis>.
+        </para>
+
+        <itemizedlist>
+          <listitem>
+            <para><emphasis role="strong">login</emphasis>, the login you want to use</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis role="strong">host</emphasis>, the server to connect to</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis role="strong">port</emphasis>, the port to use if not default (443)</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis role="strong">language</emphasis>, using the IETF lang code</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis role="strong">keymap</emphasis>, using the IETF lang code</para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis role="strong">mode</emphasis>, the session mode,
+              can be <emphasis>applications</emphasis>,
+              <emphasis>auto</emphasis> or <emphasis>desktop</emphasis>
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis role="strong">size</emphasis>, for desktop mode
+              only. Can be <emphasis>800x600</emphasis>,
+              <emphasis>1024x768</emphasis> (default),
+              <emphasis>1280x678</emphasis>,
+              <emphasis>maximized</emphasis> or
+              <emphasis>fullscreen</emphasis>
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis role="strong">auto-publish</emphasis>, for
+              applications mode only, add the application shortcuts on
+              the Desktop and perform file associations. Can be
+              <emphasis>true</emphasis> (default) or
+              <emphasis>false</emphasis>.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis role="strong">use-local-credentials</emphasis>, Can be
+              <emphasis>true</emphasis> or
+              <emphasis>false</emphasis> (default).
+            </para>
+            <para>
+              When this option is used, the <emphasis>login</emphasis>
+              attribute is useless.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis role="strong">show-progressbar</emphasis>, Can be
+              <emphasis>true</emphasis> (default) or
+              <emphasis>false</emphasis>.
+            </para>
+          </listitem>
+
+          <listitem>
+            <para>
+              <emphasis role="strong">locked-gui</emphasis>, minimal interface with only login and password fields
+            </para>
+          </listitem>
+        </itemizedlist>
+      </simplesect>
+    </section>
+
+    <section id="sso">
+      <title>Single Sign-On</title>
+
+      <para>
+        On <trademark class="registered">Microsoft Windows</trademark>
+        system, it's possible to perform SSO connection using the
+        local credentials.
+      </para>
+      <para>
+        To enable this feature, you have to check the "Use local
+        creadential" checkbox or define it in the configuration (file
+        or registry).
+      </para>
+
+      <important>
+        <para>
+          That feature requires a server side configuration.
+        </para>
+        <para>
+          You have to use a Apache authentication module (Kerberos or
+          NTLM) and enable the "Apache auth module" into the
+          Administration Console.
+        </para>
+      </important>
+    </section>
+  </section>
+  <xi:include href="colophon.xml" />
+</article>

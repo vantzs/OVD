@@ -1,0 +1,685 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+"http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd">
+<article xmlns:xi="http://www.w3.org/2001/XInclude">
+  <articleinfo>
+    <title>Ulteo Open Virtual Desktop v@VERSION@</title>
+    <subtitle>Protocol Description</subtitle>
+    <graphic fileref="img/ovd.png" align="center"/>
+
+    <copyright>
+      <year>@YEAR@</year>
+      <holder>Ulteo SAS - <ulink url="http://www.ulteo.com" /></holder>
+    </copyright>
+  </articleinfo>
+
+  <para>
+    The purpose of this documentation is to describe the protocols
+    used by <emphasis>Ulteo Open Virtual Desktop</emphasis>.
+  </para>
+
+  <section id="used_proto_list">
+    <title>List of Protocols used</title>
+    
+    <section id="proto_http">
+      <title>Hyper Text Transfert Protocol (HTTP)</title>
+
+      <para>
+	The base communication protocol used in Ulteo OVD to negociate
+	session is HTTP over SSL. This protocol runs over TCP on the
+	port 443.
+      </para>
+
+      <para>
+	Ulteo OVD use also HTTP for the communication between servers:
+	Session Manager to Application Server and vice versa. For this
+	usage, the TCP ports 1111 and 1112 (non standart service
+	ports) are used.
+      </para>
+
+      <para>
+	Several product of Ulteo OVD like the Administration Console
+	and Web Client are pure web-based and use HTTP because the
+	client is supposed to be a web browser.
+      </para>
+
+      <para><ulink url="http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol">HTTP on Wikipedia</ulink></para>
+    </section>
+
+    <section id="proto_rdp">
+      <title>Remote Desktop Protocol (RDP)</title>
+
+      <para>
+	RDP is the remote display protocol used
+	by <trademark class="registered">Microsoft Corp.</trademark>
+	for their <trademark>Terminal Services</trademark> software.
+      </para>
+
+      <para>
+	RDP is used by Ulteo Open Virtual Desktop to display desktop
+	and applications. 
+      </para>
+
+      <para>
+	RDP use the TCP port 3389.
+      </para>
+
+      <para><ulink url="http://en.wikipedia.org/wiki/Remote_Desktop_Protocol">RDP on Wikipedia</ulink></para>
+    </section>
+
+    <section id="proto_ssl">
+      <title>Secure Socket Layer (SSL)</title>
+
+      <para>
+	SSL is an cryptographic layer protocol that provide encription
+	between server and client.
+      </para>
+
+      <para>
+	SSL is used by Ulteo OVD to tunnelize HTTP and/or RDP.
+      </para>
+
+      <para><ulink url="http://en.wikipedia.org/wiki/Secure_Sockets_Layer">SSL on Wikipedia</ulink></para>
+    </section>
+  </section>
+
+
+  <section id="server_comm">
+    <title>Server Communication</title>
+    <para>
+      Servers communicate by using HTTP webservices (hosted by
+      Apache). The Session Manager listen on the TCP port 1111 and
+      Application Servers are using port 1112.
+    </para>
+
+    <para>
+      The Session Manager identifies an Application Server using its
+      Fully Qualified Domain Name (FQDN).
+    </para>
+
+    <para>
+      Applications Servers only answer to the Session Manager for
+      which the address is stored in a configuration file.
+    </para>
+
+    <section id="security">
+      <title>Security</title>
+      <para>
+	At the moment, the server are authenticated using the DNS resolution system.
+      </para>
+
+      <para>
+	When an Application Server sends a status, it sends an extra
+	argument named <emphasis>fqdn</emphasis>.  The Session Manager
+	performs 2 authentication tests and 1 authorization.
+
+	<itemizedlist>
+	  <listitem><para><emphasis role="strong">FQDN
+	  resolution:</emphasis> resolves the FQDN to get an IP address
+	  and tests if it matches the remote server IP
+	  ($SERVER['REMOTE_ADDR'] in PHP). Authentication directly
+	  depends on that match</para></listitem>
+
+	  <listitem><para><emphasis role="strong">reverse
+	  resolution:</emphasis> resolves the server IP address and tests
+	  if it matches the FQDN argument. Authentication directly
+	  depends on that match. This test can be disabled in the
+	  administration console using <emphasis>Disable FQDN
+	  check</emphasis></para></listitem>
+
+	  <listitem><para><emphasis
+	  role="strong">authorization:</emphasis> tests the match of the FQDN
+	  with one of the <emphasis>Authorized FQDN</emphasis> defined
+	  in the administration console.</para></listitem>
+	</itemizedlist>
+      </para>
+    </section>
+
+    <section id="http_code">
+      <title>HTTP return codes</title>
+      <para>
+	Webservices are using the standard HTTP return codes to know if the
+	request succeeded.
+      </para>
+
+      <itemizedlist>
+	<listitem>
+	  <para><emphasis role="strong">200 OK :</emphasis>
+	  request succeeded</para>
+	</listitem>
+
+	<listitem>
+	  <para><emphasis role="strong">400 Bad Request :</emphasis>
+	  request argument no valid</para>
+	</listitem>
+
+	<listitem>
+	  <para><emphasis role="strong">401 Unauthorized :</emphasis>
+	  From SM to ApS: ApS detects that the remote address is not its
+	  SM. From ApS to SM: ApS is not registered yet or has invalid
+	  authentication.</para>
+	</listitem>
+
+	<listitem>
+	  <para><emphasis role="strong">500 Internal Server Error :</emphasis>
+	  Either a bug was detected on the system or the system is
+	  broken.</para>
+	</listitem>
+      </itemizedlist>
+    </section>
+  </section>
+
+
+  <section id="desktop_session">
+    <title>OVD Client session</title>
+
+    <section>
+      <title>A simple session establishement process</title>
+      
+      <para>
+	The following schema describe the steps of the establishement
+	of a Ulteo OVD session.
+      </para>
+
+      <para>
+	In this example, only one Application Server is used, the
+	session do not use File Servers (internal or external) and the
+	client connect directly without an OVD Gateway.
+      </para>
+     
+      <inlinemediaobject>
+	<imageobject>
+	  <imagedata fileref="img/session.png"/>
+	</imageobject>
+      </inlinemediaobject>
+    </section>
+
+    <section id="sm_cleint_webservices">
+      <title>Session Manager client webservices</title>
+
+      <para>
+	Session Manager client webservices are used by client
+	softwares to negotiate and manage their session.
+      </para>
+
+      <para>
+	The base URL to access to these services is
+	<ulink url="https://sm.ulteo.com/ovd" />.
+      </para>
+
+      <para>
+	Here is the list of availables webservices.
+      </para>
+
+      <simplesect>
+	<title>applications.php</title>
+	
+	<itemizedlist>
+	  <listitem>
+	    <para><emphasis role="strong">method:</emphasis> GET</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <emphasis role="strong">arguments: none</emphasis>
+	      (except authentication, see auth.php)
+	    </para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+              <emphasis role="strong">returns:</emphasis> an
+              applications list and details as XML content.
+            </para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>
+	  This webservice provide the available applications list and
+	  details for the current authenticated user. The
+	  authentication can be done either by the dedicated service
+	  (auth.php) or directly into this one.
+	</para>
+
+        <para>
+          XML format: 
+
+          <itemizedlist>
+            <listitem>
+              <emphasis role="strong">user</emphasis> Root node
+
+              <itemizedlist>
+		<listitem>
+                  <emphasis>login</emphasis> Attribute
+                </listitem>
+	        <listitem>
+                  <emphasis role="strong">application nodes</emphasis>
+                </listitem>
+	      </itemizedlist>
+	    </listitem>
+
+	    <listitem>
+              <emphasis role="strong">application</emphasis> Node
+              <itemizedlist>
+	        <listitem>
+                  <emphasis>id</emphasis> Attribute
+                </listitem>
+	        <listitem>
+                  <emphasis>name</emphasis> Attribute
+                </listitem>
+	        <listitem>
+                  <emphasis>description</emphasis> Attribute
+                </listitem>
+		<listitem>
+                  <emphasis role="strong">mime nodes</emphasis>
+                </listitem>
+	      </itemizedlist>
+	    </listitem>
+
+            <listitem>
+              <emphasis>mime</emphasis> Node
+              <itemizedlist>
+	        <listitem>
+                  <emphasis>type</emphasis> Attribute
+                </listitem>
+	      </itemizedlist>
+            </listitem>
+	  </itemizedlist>
+        </para>
+
+        <para>
+          Here is an example:
+          <screen>
+<![CDATA[<?xml version="1.0" encoding="utf-8"?>
+<user login="mwilson">
+    <application id="1850" name="AbiWord" description="Compose, edit,
+and view documents">   
+        <mime type="application/docbook+xml"/>
+        <mime type="application/msword"/>
+        <mime type="application/rtf"/>
+    </application>
+   
+    <application id="1857" name="Mousepad" description="Simple text editor">
+        <mime type="text/plain"/>
+    </application>
+</user>]]>
+          </screen>
+        </para>
+      </simplesect>
+
+      <simplesect>
+	<title>auth.php</title>
+	
+	<itemizedlist>
+	  <listitem>
+	    <para><emphasis role="strong">method:</emphasis> POST</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <emphasis role="strong">arguments: XML input (optionnal)</emphasis>
+	    </para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+              <emphasis role="strong">returns:</emphasis> HTTP default return codes.
+            </para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>
+	  This is the dedicated authentication service. Authentication
+	  method depends of the enabled authentication module from the
+	  Administration console.
+	</para>
+
+	<para>
+	  The XML input is only used for password and token
+	  authentication mechanisms.
+	</para>
+
+        <para>
+          XML format: the root node and the XML tree doesn't matter
+          for this webservice. The system only check if
+          a <emphasis>user</emphasis> node exist and test it.
+
+          <itemizedlist>
+            <listitem>
+              <emphasis role="strong">user</emphasis> node
+
+              <itemizedlist>
+		<listitem>
+                  <emphasis>login</emphasis> Attribute
+                </listitem>
+		<listitem>
+                  <emphasis>password</emphasis> Attribute
+                </listitem>
+		<listitem>
+                  <emphasis>token</emphasis> Attribute
+                </listitem>
+	      </itemizedlist>
+	    </listitem>
+	  </itemizedlist>
+        </para>
+
+	<para>
+	  If the password module is enabled, it uses
+	  the <emphasis>login</emphasis>
+	  and <emphasis>password</emphasis> attributes.
+	</para>
+	<para>
+	  If the token module is enabled, it only uses
+	  the <emphasis>token</emphasis> attribute.
+	</para>
+      </simplesect>
+
+      <simplesect>
+	<title>icon.php</title>
+	
+	<itemizedlist>
+	  <listitem>
+	    <para><emphasis role="strong">method:</emphasis> GET</para>
+	  </listitem>
+	  <listitem>
+	    <para><emphasis role="strong">arguments:</emphasis> 
+	    <itemizedlist>
+	      <listitem>
+		<para>id: an application identifier</para>
+              </listitem>
+	    </itemizedlist>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para><emphasis role="strong">returns:</emphasis> the
+	    application icon as 32x32:32 image/png</para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>
+	  This service provide an application icon from an application id.
+	</para>
+
+	<para>
+	  The authentication can be done either by the dedicated
+	  service (auth.php) or directly into this one. It also
+	  possible to access to any icon without anonymoulsy by enable
+	  the <emphasis>Public Webservices access</emphasis> access
+	  from the Administration Console.
+	</para>
+      </simplesect>
+
+      <simplesect>
+	<title>logout.php</title>
+	
+	<itemizedlist>
+	  <listitem>
+	    <para><emphasis role="strong">method:</emphasis> ANY</para>
+	  </listitem>
+	  <listitem>
+	    <para><emphasis role="strong">arguments:</emphasis> None</para>
+	  </listitem>
+	  <listitem>
+	    <para><emphasis role="strong">returns:</emphasis> XML</para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>
+	  This webservice can be called to turn into de-authenticaded state.
+	</para>
+      </simplesect>
+
+
+      <simplesect>
+	<title>mimetype-icon.php</title>
+	
+	<itemizedlist>
+	  <listitem>
+	    <para><emphasis role="strong">method:</emphasis> GET</para>
+	  </listitem>
+	  <listitem>
+	    <para><emphasis role="strong">arguments:</emphasis> 
+	    <itemizedlist>
+	      <listitem>
+		<para>id: a mime-type name</para>
+              </listitem>
+	    </itemizedlist>
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para><emphasis role="strong">returns:</emphasis> the
+	    application icon as 32x32:32 image/png</para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>
+	  This service provide an mime-type icon building it on the
+	  fly from the most appropriate application supporting that
+	  mime-type.
+	</para>
+      </simplesect>
+
+
+      <simplesect>
+	<title>session_status.php</title>
+	
+	<itemizedlist>
+	  <listitem>
+	    <para><emphasis role="strong">method:</emphasis> GET</para>
+	  </listitem>
+          <listitem>
+	    <para>
+	      <emphasis role="strong">arguments: None</emphasis> 
+	    </para>
+	  </listitem>
+	  <listitem>
+	    <para><emphasis role="strong">returns:</emphasis> session
+	    status as XML content</para>
+	  </listitem>
+	</itemizedlist>
+
+        <para>
+          XML format: 
+
+          <itemizedlist>
+            <listitem>
+              <emphasis role="strong">session</emphasis>
+              Root node
+
+              <itemizedlist>
+		<listitem>
+                  <emphasis role="strong">id</emphasis> Attribute
+                </listitem>
+                <listitem>
+                  <emphasis role="strong">status</emphasis> Attribute
+                </listitem>
+	      </itemizedlist>
+            </listitem>
+	  </itemizedlist>
+        </para>
+      </simplesect>
+
+      <simplesect>
+	<title>userlist.php</title>
+	
+	<itemizedlist>
+	  <listitem>
+	    <para><emphasis role="strong">method:</emphasis> GET</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <emphasis role="strong">arguments: none</emphasis>
+	    </para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+              <emphasis role="strong">returns:</emphasis> a
+              users list as XML content.
+            </para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>
+	  This webservice provide the available users list from the
+	  users base used by the Session Manager.
+	</para>
+
+        <para>
+          XML format: 
+
+          <itemizedlist>
+            <listitem>
+              <emphasis role="strong">users</emphasis> Root node
+
+              <itemizedlist>
+	        <listitem>
+                  <emphasis role="strong">user nodes</emphasis>
+                </listitem>
+	      </itemizedlist>
+	    </listitem>
+
+	    <listitem>
+              <emphasis role="strong">user</emphasis> Node
+              <itemizedlist>
+	        <listitem>
+                  <emphasis>login</emphasis> Attribute
+                </listitem>
+	        <listitem>
+                  <emphasis>displayname</emphasis> Attribute
+                </listitem>
+	      </itemizedlist>
+            </listitem>
+	  </itemizedlist>
+        </para>
+
+	<para>
+	  The service only respond if the <emphasis>Display users
+	  list</emphasis> setting is enable from the Administration
+	  Console.
+	</para>
+	<para>
+	  The service limits to 100 items in the list (can be changed
+	  from the Administration Console).
+	</para>
+      </simplesect>
+
+      <simplesect>
+	<title>start.php</title>
+	
+	<itemizedlist>
+	  <listitem>
+	    <para><emphasis role="strong">method:</emphasis> POST</para>
+	  </listitem>
+	  <listitem>
+	    <para>
+	      <emphasis role="strong">arguments: XML content</emphasis> 
+	    </para>
+	  </listitem>
+
+	  <listitem>
+	    <para><emphasis role="strong">returns:</emphasis> session
+	    parameters as XML content</para>
+	  </listitem>
+	</itemizedlist>
+
+	<para>
+	  This service is the one used by a client to negotiate a
+	  session. In the input XML, the client describes the parameter
+	  wanted for the session. According with the Administration
+	  Console policy, the Session Manager returns either a session
+	  (with parameter and access) or an error message explaining
+	  why the session cannot be created.
+	</para>
+
+
+	<para>
+	  The error returned message can be:
+	  <itemizedlist>
+	    <listitem>
+	      <para><emphasis>auth_failed</emphasis></para>
+	    </listitem>
+	    <listitem>
+	      <para><emphasis>in_maintenance</emphasis></para>
+	    </listitem>
+	    <listitem>
+	      <para><emphasis>internal_error</emphasis></para>
+	    </listitem>
+	    <listitem>
+	      <para><emphasis>invalid_user</emphasis></para>
+	    </listitem>
+	    <listitem>
+	      <para><emphasis>service_not_available</emphasis></para>
+	    </listitem>
+	    <listitem>
+	      <para><emphasis>unauthorized_session_mode</emphasis></para>
+	    </listitem>
+	    <listitem>
+	      <para><emphasis>user_with_active_session</emphasis></para>
+	    </listitem>
+	  </itemizedlist>
+	</para>
+      </simplesect>
+    </section>
+  </section>
+  
+  <section id="web_client">
+    <title>Web Client external API</title>
+
+    <para>
+      The Ulteo OVD Web Client has an Javascript API to easily start
+      an application or a desktop from another service.
+    </para>
+
+    <para>
+      Here is a simple example HTML page which start a seamless Ulteo
+      OVD application:
+    </para>
+    <screen>
+<![CDATA[<html>
+  <head>
+    <!-- Load the Ulteo javascript files -->
+    <script type="text/javascript" 
+	    src="http://web.ulteo.com/media/script/lib/prototype/prototype.js" 
+	    charset="utf-8"></script>
+    <script type="text/javascript" 
+	    src="http://web.ulteo.com/media/script/external.js" 
+	    charset="utf-8"></script>
+
+    <script type="text/javascript">
+function start(form_) {
+	var ovd = new UlteoOVD_start_Application(
+                 'http://'+form_.server.value+'/ovd', 
+                 form_.app.value
+             );
+        ovd.setAuthPassword(form_.login.value, form_.password.value);
+	ovd.start();
+}
+    </script>
+  </head>
+  <body>
+
+<form action="#" onsubmit="start(this); return false;">
+ Server: 
+ <input type="text" name="server" value="web.ulteo.com" />
+ <br/>
+
+ Login: 
+ <input type="text" name="login" value="" />
+ <br/>
+
+ Password: 
+ <input type="password" name="password" value="" />
+ <br/>
+
+ Application id: 
+ <input type="text" name="app" value="2" />
+ <br/>
+
+ <input type="submit" value="Launch" />
+</form>
+ </body>
+</html>]]>
+    </screen>
+  </section>
+
+  <xi:include href="colophon.xml" />
+</article>
